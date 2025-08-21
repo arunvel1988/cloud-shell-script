@@ -45,7 +45,7 @@ gcloud compute instances create $VM_NAME \
 
 echo "[+] Creating firewall rule to allow SSH..."
 gcloud compute firewall-rules create allow-ssh \
-  --allow tcp:22 \
+  --allow tcp:22,tcp:80 \
   --source-ranges=$SOURCE_RANGE \
   --target-tags=$FIREWALL_TAG_SSH \
   --project=$PROJECT_ID
