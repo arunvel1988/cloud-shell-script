@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 RESOURCE_GROUP="myResourceGroup"
 VM_NAME="myVM"
 LOCATION="centralindia"  
@@ -23,7 +22,7 @@ az network nsg create \
   --resource-group $RESOURCE_GROUP \
   --name "${VM_NAME}-nsg"
 
-# Add rules for SSH (22) and HTTP (80) with different priorities
+# Add rules for SSH (22) and HTTP (80)
 az network nsg rule create \
   --resource-group $RESOURCE_GROUP \
   --nsg-name "${VM_NAME}-nsg" \
@@ -50,13 +49,20 @@ az network vnet create \
   --name "${VM_NAME}-vnet" \
   --subnet-name "${VM_NAME}-subnet"
 
-# Create NIC attached to NSG
+# Create public IP
+az network public-ip create \
+  --resource-group $RESOURCE_GROUP \
+  --name "${VM_NAME}-pip" \
+  --allocation-method Static
+
+# Create NIC attached to NSG and public IP
 az network nic create \
   --resource-group $RESOURCE_GROUP \
   --name "${VM_NAME}-nic" \
   --vnet-name "${VM_NAME}-vnet" \
   --subnet "${VM_NAME}-subnet" \
-  --network-security-group "${VM_NAME}-nsg"
+  --network-security-group "${VM_NAME}-nsg" \
+  --public-ip-address "${VM_NAME}-pip"
 
 # Create the VM
 az vm create \
